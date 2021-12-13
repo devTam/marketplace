@@ -6,17 +6,17 @@ const { Item } = Menu;
 function Nav() {
     return (
         <Menu mode='horizontal'>
-            <Item icon={<AppstoreOutlined />}>
+            <Item key="home" icon={<AppstoreOutlined />}>
                 <Link href="/"> 
                     <a>Home</a>
                 </Link>
             </Item>
-            <Item icon={<LoginOutlined />}>
+            <Item key="login" icon={<LoginOutlined />}>
                 <Link href="/login">
                     <a>login</a>
                 </Link>
             </Item>
-            <Item icon={<UserAddOutlined /> }>
+            <Item key="register" icon={<UserAddOutlined /> }>
                 <Link href="/register">
                     <a>register</a>
                 </Link>
