@@ -1,6 +1,6 @@
 function Login() {
     return (
-        <div text-center>
+        <div>
             Login page
         </div>
     )
