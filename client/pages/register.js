@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from "next/link";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
@@ -13,7 +14,7 @@ function Register() {
     e.preventDefault();
     try {
       setLoading(true);
-      const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API}/register`, {
+      const { data } = await axios.post(`/api/register`, {
         name,
         email,
         password,
@@ -23,6 +24,7 @@ function Register() {
     } catch (err) {
       setLoading(false);
       toast.error(err.response.data.message);
+      console.log(err);
     }
   };
   return (
@@ -37,9 +39,9 @@ function Register() {
             onChange={(e) => setName(e.target.value)}
             value={name}
           />
-          <input 
+          <input
             type="email"
-             placeholder="Enter your email"
+            placeholder="Enter your email"
             className="form-control mb-4"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
@@ -56,11 +58,13 @@ function Register() {
             className="btn col-12 btn-primary"
             disabled={loading || !name || !email || !password}
           >
-            {
-              loading ? <SyncOutlined spin={true} /> : "Register"
-            }
+            {loading ? <SyncOutlined spin={true} /> : "Register"}
           </button>
         </form>
+
+        <p className="text-center p-3">
+          Already registered? <Link href="/login">Login</Link>
+        </p>
       </div>
     </div>
   );
