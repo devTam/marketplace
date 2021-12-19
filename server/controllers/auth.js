@@ -80,21 +80,31 @@ const login = async (req, res) => {
       maxAge: 1000 * 60 * 60,
     });
     const data = {
-        name: existingUser.name,
-        email: existingUser.email,
-        avatar: existingUser.avatar,
-        role: existingUser.role,
-        id: existingUser._id,
+      name: existingUser.name,
+      email: existingUser.email,
+      avatar: existingUser.avatar,
+      role: existingUser.role,
+      id: existingUser._id,
     };
 
     return res.status(200).json({
       message: "Login successful",
       user: data,
     });
-
   } catch (error) {
     res.status(500).send({ message: "Error Logging in user" });
   }
 };
 
-export { register, login };
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.status(200).json({
+      message: "Logout successful!",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { register, login, logout };
