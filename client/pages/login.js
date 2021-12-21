@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -13,6 +13,11 @@ function Login() {
 
   const { state, dispatch } = useContext(Context);
   const router = useRouter();
+  const { user } = state;
+
+  useEffect(() => {
+    if (user) router.push("/");
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

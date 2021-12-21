@@ -1,3 +1,5 @@
+import axios from "axios";
+import { useRouter } from "next/router";
 import { useReducer, createContext, useEffect } from "react";
 
 const initialState = {
@@ -5,6 +7,8 @@ const initialState = {
 };
 
 const Context = createContext();
+
+const router = useRouter()
 
 const rootReducer = (state, action) => {
   switch (action.type) {
@@ -28,11 +32,38 @@ const rootReducer = (state, action) => {
 const Provider = ({ children }) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
   useEffect(() => {
-      dispatch({
-          type: 'LOGIN',
-          payload: JSON.parse(localStorage.getItem('user'))
-      })
-  }, [])
+    dispatch({
+      type: "LOGIN",
+      payload: JSON.parse(localStorage.getItem("user")),
+    });
+  }, []);
+  //   log user out when token expires
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (
+        error.response.status === 401 &&
+        response.config &&
+        !response.config.__isRetryRequest
+      ) {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("/api/logout")
+            .then(() => {
+              dispatch({ type: "LOGOUT" });
+              localStorage.removeItem("user");
+              router.push("/login");
+              resolve(error);
+            })
+            .catch(() => {
+              reject(error);
+            });
+        });
+      }
+      return Promise.reject(error);
+    }
+  );
+
   return (
     <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>
   );

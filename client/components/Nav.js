@@ -8,11 +8,12 @@ import {
   LoginOutlined,
   LogoutOutlined,
   UserAddOutlined,
+  CoffeeOutlined
 } from "@ant-design/icons";
 import { Context } from "../context";
 import { toast } from "react-toastify";
 
-const { Item } = Menu;
+const { Item, SubMenu  } = Menu;
 
 function Nav() {
   const [current, setCurrent] = useState("");
@@ -71,14 +72,15 @@ function Nav() {
         </>
       )}
       {user && (
-        <Item
+        <SubMenu icon={<CoffeeOutlined />} title={user && user.user.name} className="end">
+            <Item
           key="/logout"
           onClick={logout}
           icon={<LogoutOutlined />}
-          className="end"
         >
           Logout
         </Item>
+        </SubMenu>
       )}
     </Menu>
   );
