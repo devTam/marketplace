@@ -107,4 +107,16 @@ const logout = async (req, res) => {
   }
 };
 
-export { register, login, logout };
+const currentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    console.log(user);
+    res.status(200).json({
+      ok: true,
+    });
+  } catch (error) {
+    res.status(500).send({ message: "Error getting current user" });
+  }
+};
+
+export { register, login, logout, currentUser };

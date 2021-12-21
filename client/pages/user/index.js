@@ -1,19 +1,18 @@
-import { useEffect, useState, useContext } from "react"; 
-// import { Context } from "../context/index";
+import { useContext } from "react";
+import { Context } from "../../context/index";
 import axios from "axios";
+import UserRoute from "../../components/routes/UserRoute";
 
 function UserHome() {
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         try {
-    //             const { data } = await axios.get("/api/current-user");
-                
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
-    // }, [])
-  return <h1 className="bg-light p-5 text-center bg-primary">Welcome</h1>;
+  const {
+    state: { user },
+  } = useContext(Context);
+
+  return (
+    <UserRoute>
+        <h1 className="bg-light p-5 text-center bg-primary">Welcome</h1>
+    </UserRoute>
+  );
 }
 
 export default UserHome;
