@@ -8,8 +8,6 @@ const initialState = {
 
 const Context = createContext();
 
-const router = useRouter()
-
 const rootReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
@@ -31,6 +29,7 @@ const rootReducer = (state, action) => {
 
 const Provider = ({ children }) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
+  const router = useRouter();
   useEffect(() => {
     dispatch({
       type: "LOGIN",
@@ -63,6 +62,14 @@ const Provider = ({ children }) => {
       return Promise.reject(error);
     }
   );
+
+  useEffect(() => {
+    const getCsrfToken = async () => {
+      const { data } = await axios.get("/api/csrf-token");
+      axios.defaults.headers["X-CSRF-Token"] = data.csrfToken;
+    };
+    getCsrfToken();
+  }, []);
 
   return (
     <Context.Provider value={{ state, dispatch }}>{children}</Context.Provider>
