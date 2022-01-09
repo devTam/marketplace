@@ -68,8 +68,12 @@ function Login() {
           </button>
         </form>
 
-        <p className="text-center p-3">
+        <p className="text-center pt-3">
           Not registered? <Link href="/register">Register</Link>
+        </p>
+
+        <p className="text-center">
+          Forgot password? <Link href="/forgotPassword">Reset password</Link>
         </p>
       </div>
     </div>

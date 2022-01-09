@@ -2,6 +2,7 @@ import User from "../models/user";
 import { hashPassword, comparePassword } from "../utils/auth";
 import jwt from "jsonwebtoken";
 import AWS from "aws-sdk";
+import { nanoid } from "nanoid";
 
 const awsConfig = {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -129,46 +130,94 @@ const currentUser = async (req, res) => {
   }
 };
 
-const sendEmail = async (req, res) => {
-  // console.log("send email");
-  // res.json({ok : true})
-  const params = {
-    Source: process.env.EMAIL_SENDER,
-    // destination must be verified in dev mode
-    Destination: { ToAddresses: ["tammy.batubo@gmail.com"] },
-    ReplyToAddresses: [process.env.EMAIL_SENDER],
-    Message: {
-      Subject: {
-        Charset: "UTF-8",
-        Data: "Password Reset",
-      },
-      Body: {
-        Html: {
+// const sendEmail = async (req, res) => {
+//   // console.log("send email");
+//   // res.json({ok : true})
+//   const params = {
+//     Source: process.env.EMAIL_SENDER,
+//     // destination must be verified in dev mode
+//     Destination: { ToAddresses: ["tammy.batubo@gmail.com"] },
+//     ReplyToAddresses: [process.env.EMAIL_SENDER],
+//     Message: {
+//       Subject: {
+//         Charset: "UTF-8",
+//         Data: "Password Reset",
+//       },
+//       Body: {
+//         Html: {
+//           Charset: "UTF-8",
+//           Data: `
+//             <h1>Reset Password</h1>
+//             <p>Please click the following link to reset your password</p>
+//             <p>
+//               <a href="http://localhost:4000/reset-password">Reset Password</a>
+//             </p>
+//           `,
+//         },
+//       },
+//     },
+//   };
+
+//   try {
+//     const email = await SES.sendEmail(params).promise();
+//     console.log(email);
+//     res.json({
+//       ok: true,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.json({
+//       ok: false,
+//     });
+//   }
+// };
+
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const shortCode = nanoid(6);
+  try {
+    const user = await User.findOneAndUpdate({ email }, { passwordResetCode: shortCode });
+    if (!user) {
+      return res.status(400).json({
+        message: "User does not exist",
+      });
+    }
+
+    const params = {
+      Source: process.env.EMAIL_SENDER,
+      Destination: { ToAddresses: [email] },
+      ReplyToAddresses: [process.env.EMAIL_SENDER],
+      Message: {
+        Subject: {
           Charset: "UTF-8",
-          Data: `
-            <h1>Reset Password</h1>
-            <p>Please click the following link to reset your password</p>
-            <p>
-              <a href="http://localhost:4000/reset-password">Reset Password</a>
-            </p>
-          `,
+          Data: "Password Reset",
+        },
+        Body: {
+          Html: {
+            Charset: "UTF-8",
+            Data: `
+              <h1>Reset Password</h1>
+              <p>Please use the following code to reset your password</p>
+              <h4 style="fontWeight: bold;">
+                ${shortCode}
+              </p>
+            `,
+          },
         },
       },
-    },
-  };
+    };
 
-  try {
-    const email = await SES.sendEmail(params).promise();
-    console.log(data);
-    res.json({
-      ok: true,
+    await SES.sendEmail(params).promise();
+
+    return res.status(200).json({
+      message: "Email sent successfully",
     });
   } catch (error) {
     console.log(error);
-    res.json({
-      ok: false,
-    });
+    res.status(500).send({ message: "Error sending email" });
   }
 };
 
-export { register, login, logout, currentUser, sendEmail };
+
+
+export { register, login, logout, currentUser, forgotPassword };
