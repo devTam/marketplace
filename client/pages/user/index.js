@@ -10,7 +10,7 @@ function UserHome() {
 
   return (
     <UserRoute>
-        <h1 className="bg-light p-5 text-center bg-primary">Welcome</h1>
+        <h1 className="bg-light p-5 text-center bg-primary">Dashboard</h1>
     </UserRoute>
   );
 }

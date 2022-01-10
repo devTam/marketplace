@@ -31,7 +31,7 @@ function Login() {
       dispatch({ type: "LOGIN", payload: data });
 
       localStorage.setItem("user", JSON.stringify(data));
-      router.push("/");
+      router.push("/user");
 
       toast.success("Login successful 🎉 ");
     } catch (err) {

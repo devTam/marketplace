@@ -9,6 +9,8 @@ import {
   LogoutOutlined,
   UserAddOutlined,
   CoffeeOutlined,
+  CarryOutOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { Context } from "../context";
 import { toast } from "react-toastify";
@@ -38,6 +40,7 @@ function Nav() {
     }
   };
 
+
   return (
     <Menu mode="horizontal" selectedKeys={[current]}>
       <Item
@@ -49,6 +52,27 @@ function Nav() {
           <a>Home</a>
         </Link>
       </Item>
+      {user && user?.user.role && user?.user.role.includes("Instructor") ? (
+        <Item
+          key="/instructor/course/create"
+          onClick={(e) => setCurrent(e.key)}
+          icon={<CarryOutOutlined />}
+        >
+          <Link href="/instructor/course/create">
+            <a>Create course</a>
+          </Link>
+        </Item>
+      ) : (
+        <Item
+          key="/user/becomeInstructor"
+          onClick={(e) => setCurrent(e.key)}
+          icon={<TeamOutlined />}
+        >
+          <Link href="/user/becomeInstructor">
+            <a>Become Instructor</a>
+          </Link>
+        </Item>
+      )}
       {!user && (
         <>
           <Item
@@ -79,15 +103,14 @@ function Nav() {
           key={user && user.user.id}
         >
           <ItemGroup>
-          <Item key="/user" onClick={logout}>
-            <Link href="/user">
-              <a>Dashboard</a>
-            </Link>
-          </Item>
-          <Item key="/logout" onClick={logout}>
-            Logout
-          </Item>
-
+            <Item key="/user">
+              <Link href="/user">
+                <a>Dashboard</a>
+              </Link>
+            </Item>
+            <Item key="/logout" onClick={logout}>
+              Logout
+            </Item>
           </ItemGroup>
         </SubMenu>
       )}
