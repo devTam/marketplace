@@ -9,7 +9,7 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [token, setToken] = useState("");
+  const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
   const {
@@ -40,35 +40,59 @@ const ForgotPassword = () => {
     }
   };
 
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const { data } = await axios.post(`/api/resetPassword`, {
+        email,
+        code,
+        newPassword,
+      });
+      setLoading(false);
+      setEmail("");
+      setCode("");
+      setNewPassword("");
+      toast.success("Password reset successful");
+      router.push("/login");
+    } catch (err) {
+      setLoading(false);
+      toast.error(err.response.data.message);
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <h1 className="bg-light p-5 text-center bg-primary">Forgot password</h1>
       <div className="container col-md-4 offset-md-4 pb-5">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="form-control mb-4"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            required
-          />
-          <button
-            type="submit"
-            className="btn btn-primary btn-block w-100 mb-4"
-            disabled={loading}
-          >
-            {loading ? <SyncOutlined spin /> : "Send me the secret code"}
-          </button>
-        </form>
-        {success && (
+        {!success && (
           <form onSubmit={handleSubmit}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="form-control mb-4"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              required
+            />
+            <button
+              type="submit"
+              className="btn btn-primary btn-block w-100 mb-4"
+              disabled={loading}
+            >
+              {loading ? <SyncOutlined spin /> : "Send me the secret code"}
+            </button>
+          </form>
+        )}
+        {success && (
+          <form onSubmit={handleResetPassword}>
             <input
               type="text"
               placeholder="Enter the secret code"
               className="form-control mb-4"
-              onChange={(e) => setToken(e.target.value)}
-              value={token}
+              onChange={(e) => setCode(e.target.value)}
+              value={code}
             />
             <input
               type="password"

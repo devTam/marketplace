@@ -33,6 +33,9 @@ function Register() {
         password,
       });
       setLoading(false);
+      setName("");
+      setEmail("");
+      setPassword("");
       toast.success("Registration succesful 🎉  Please Login");
     } catch (err) {
       setLoading(false);

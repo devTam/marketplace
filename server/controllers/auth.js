@@ -176,7 +176,10 @@ const forgotPassword = async (req, res) => {
   const { email } = req.body;
   const shortCode = nanoid(6);
   try {
-    const user = await User.findOneAndUpdate({ email }, { passwordResetCode: shortCode });
+    const user = await User.findOneAndUpdate(
+      { email },
+      { passwordResetCode: shortCode }
+    );
     if (!user) {
       return res.status(400).json({
         message: "User does not exist",
@@ -198,7 +201,7 @@ const forgotPassword = async (req, res) => {
             Data: `
               <h1>Reset Password</h1>
               <p>Please use the following code to reset your password</p>
-              <h4 style="fontWeight: bold;">
+              <h2 style="fontWeight: bold;">
                 ${shortCode}
               </p>
             `,
@@ -218,6 +221,31 @@ const forgotPassword = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  const { newPassword, code, email } = req.body;
+  try {
+    const hashedPassword = await hashPassword(newPassword);
 
+    console.table({newPassword, code, email})
 
-export { register, login, logout, currentUser, forgotPassword };
+    const user = await User.findOneAndUpdate(
+      { passwordResetCode: code, email },
+      { password: hashedPassword, passwordResetCode: "" }
+    );
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid code",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Password reset successful",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Error resetting password" });
+  }
+};
+
+export { register, login, logout, currentUser, forgotPassword, resetPassword };
